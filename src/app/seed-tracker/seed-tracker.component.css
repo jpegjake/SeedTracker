@@ -1,0 +1,50 @@
+h1 {
+  text-align: center;
+  color: #3e7040;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #dff0d8;
+}
+
+th,
+td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid #c8e6c9;
+}
+
+th {
+  font-weight: bold;
+  color: #2d572c;
+  border-bottom: 2px solid #c8e6c9;
+}
+
+tr:not(:last-child):nth-child(even) {
+  background-color: #f0fff080;
+}
+
+tr:not(:last-child):hover {
+  background-color: #e2f5e2;
+}
+
+.status-growing {
+  color: green;
+  font-weight: bold;
+}
+
+.status-dormant {
+  color: gray;
+}
+
+.status-harvested {
+  color: orange;
+}

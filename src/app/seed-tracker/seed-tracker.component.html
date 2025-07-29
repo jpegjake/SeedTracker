@@ -1,0 +1,175 @@
+<div class="container">
+
+  <form [formGroup]="myForm" >
+    <button type="button" title="Edit View" (click)="printMode = false;" [disabled]="!printMode" class="btn btn-outline-primary" [style.color] = "!printMode ? 'var(--bs-btn-hover-color)' : 'var(--bs-btn-color)'" [style.backgroundColor]="!printMode ? 'var(--bs-btn-hover-bg)' : 'var(--bs-btn-bg)'">Edit View</button>
+    <button type="button" title="Print View" (click)="printMode = true;" [disabled]="printMode" class="btn btn-outline-primary" [style.color] = "printMode ? 'var(--bs-btn-hover-color)' : 'var(--bs-btn-color)'" [style.backgroundColor]="printMode ? 'var(--bs-btn-hover-bg)' : 'var(--bs-btn-bg)'">Print View</button>
+    <button type="button" (click)="printPage()" [hidden]="!printMode" class="btn btn-outline-primary">🖨️ Print</button>
+    <div id="print-area">
+      <h1>Seed Tracker</h1>
+      <div class="d-flex justify-content-center">
+        <table class="w-auto">
+          <thead>
+            <tr>
+              <th scope="col" *ngIf="!printMode"></th>
+              <th scope="col">
+                <a href="#"  (click)="sortBy('type'); $event.preventDefault();">Plant Type
+                <span *ngIf="currentSort.column === 'type'">
+                  {{ currentSort.direction === 'asc' ? '▲' : '▼' }}
+                </span></a>
+              </th>
+              <th scope="col">
+                <a href="#"  (click)="sortBy('subtype'); $event.preventDefault();">Variety
+                <span *ngIf="currentSort.column === 'subtype'">
+                  {{ currentSort.direction === 'asc' ? '▲' : '▼' }}
+                </span></a>
+              </th>
+              <th scope="col">
+                <a href="#"  (click)="sortBy('qty'); $event.preventDefault();">Amount
+                <span *ngIf="currentSort.column === 'qty'">
+                  {{ currentSort.direction === 'asc' ? '▲' : '▼' }}
+                </span></a>
+              </th>
+              <th scope="col">
+                <a href="#"  (click)="sortBy('datePlanted'); $event.preventDefault();">Date Planted
+                <span *ngIf="currentSort.column === 'datePlanted'">
+                  {{ currentSort.direction === 'asc' ? '▲' : '▼' }}
+                </span></a>
+              </th>
+              <th scope="col">
+                <a href="#"  (click)="sortBy('dateTransPlanted'); $event.preventDefault();">Date TransPlanted
+                <span *ngIf="currentSort.column === 'dateTransPlanted'">
+                  {{ currentSort.direction === 'asc' ? '▲' : '▼' }}
+                </span></a>
+              </th>
+              <th scope="col">
+                <a href="#"  (click)="sortBy('notes'); $event.preventDefault();">Notes
+                <span *ngIf="currentSort.column === 'notes'">
+                  {{ currentSort.direction === 'asc' ? '▲' : '▼' }}
+                </span></a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let crop of crops">
+              <th *ngIf="!printMode" scope="row">
+                @if (editRowMode && editRowID == crop.idseeds) {
+                  <button type="button" title="Submit Edits" (click)="submitEdit()" class="btn btn-outline-primary"><i class="bi bi-pencil-square text-primary"></i></button>
+                  <i> </i>
+                  <button type="button" title="Cancel" (click)="editCrop(crop)" class="btn btn-outline-secondary"><i class="bi bi-x-lg text-secondary"></i></button>
+                } @else {
+                  <button type="button" title="Edit" (click)="editCrop(crop)" class="btn btn-outline-primary"><i class="bi bi-pencil-square text-primary"></i></button>
+                  <i> </i>
+                  <button type="button" title="Delete" (click)="deleteCrop(crop)" class="btn btn-outline-danger"><i class="bi bi-x-lg text-danger"></i></button>
+                }
+              </th>
+              @if (editRowMode && editRowID == crop.idseeds) {
+                <td>
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Plant Type</mat-label>
+                    <input type="text"
+                          placeholder="Pick one"
+                          aria-label="Plant Type"
+                          matInput
+                          [matAutocomplete]="auto"
+                          formControlName="type">
+                    <mat-autocomplete #auto="matAutocomplete">
+                      @for (option of filteredPlantTypes | async; track option) {
+                        <mat-option [value]="option">{{option}}</mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Variety</mat-label>
+                    <input type="text"
+                          placeholder="Optional"
+                          aria-label="Variety"
+                          matInput
+                          [matAutocomplete]="auto2"
+                          formControlName="subtype">
+                    <mat-autocomplete #auto2="matAutocomplete">
+                      @for (option2 of filteredPlantSubTypes | async; track option2) {
+                        <mat-option [value]="option2">{{option2}}</mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <input class="form-control" name="qty" placeholder="Enter Number of Seeds" formControlName="qty" type="number" />
+                </td>
+                <td>
+                  <input class="form-control" name="datePlanted" placeholder="Enter Date Planted" formControlName="datePlanted" type="date" />
+                </td>
+                <td>
+                  <input class="form-control" name="dateTransPlanted" placeholder="Enter Date Transplanted" formControlName="dateTransPlanted" type="date" />
+                </td>
+                <td>
+                  <input class="form-control" name="notes" placeholder="Enter Notes" formControlName="notes" type="text" height="3" />
+                </td>
+              } @else {
+                <td>{{crop.type}}</td>
+                <td>{{crop.subtype}}</td>
+                <td>{{crop.qty}}</td>
+                <td>{{crop.datePlanted | date}}</td>
+                <td>{{crop.dateTransPlanted | date}}</td>
+                <td>{{crop.notes}}</td>
+              }
+            </tr>
+            @if (!editRowMode && !printMode) {
+              <tr>
+                <th scope="row">
+                  <button title="Add Crop" type="button" (click)="addNewCrop()" [disabled]="myForm.invalid" class="btn btn-outline-success"><i class="bi bi-plus-lg text-success"></i></button>
+                </th>
+                <td>
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Plant Type</mat-label>
+                    <input type="text"
+                          placeholder="Pick one"
+                          aria-label="Plant Type"
+                          matInput
+                          [matAutocomplete]="auto"
+                          formControlName="type">
+                    <mat-autocomplete #auto="matAutocomplete">
+                      @for (option of filteredPlantTypes | async; track option) {
+                        <mat-option [value]="option">{{option}}</mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Variety</mat-label>
+                    <input type="text"
+                          placeholder="Optional"
+                          aria-label="Variety"
+                          matInput
+                          [matAutocomplete]="auto2"
+                          formControlName="subtype">
+                    <mat-autocomplete #auto2="matAutocomplete">
+                      @for (option2 of filteredPlantSubTypes | async; track option2) {
+                        <mat-option [value]="option2">{{option2}}</mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <input class="form-control" name="qty" placeholder="Enter Number of Seeds" formControlName="qty" type="number" />
+                </td>
+                <td>
+                  <input class="form-control" name="datePlanted" placeholder="Enter Date Planted" formControlName="datePlanted" type="date" />
+                </td>
+                <td>
+                  <input class="form-control" name="dateTransPlanted" placeholder="Enter Date Transplanted" formControlName="dateTransPlanted" type="date" />
+                </td>
+                <td>
+                  <input class="form-control" name="notes" placeholder="Enter Notes" formControlName="notes" type="text" height="3"/>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</div>

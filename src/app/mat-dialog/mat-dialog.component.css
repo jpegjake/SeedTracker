@@ -1,0 +1,7 @@
+mat-dialog-actions {
+  justify-content: space-between;
+}
+mat-dialog-content {
+  font-size: medium !important;
+  /* optionally change font-family, weight, etc */
+}
