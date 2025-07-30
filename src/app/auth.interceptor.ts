@@ -21,7 +21,7 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     // Add your custom header (e.g., Authorization)
-    const token = localStorage.getItem('jwt'); // or use a service
+    const token = this.authService.getToken(); // or use a service
     let modifiedReq = req;
 
     if (token) {
