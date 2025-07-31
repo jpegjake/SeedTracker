@@ -6,11 +6,6 @@ button {
   margin-left: 5px;
 }
 
-/* div.container {
-  font-family: "Tuffy", sans-serif;
-  font-weight: 400;
-} */
-
 .form-control {
   width: unset;
   padding: .2rem .4rem;
@@ -26,4 +21,46 @@ button {
     url('/assets/images/bg.jpg') center/cover no-repeat;
   background-size: 100% 100%;
   padding: 2rem;
+}
+
+:host {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 8px 0;
+}
+
+p {
+  margin: 0;
+}
+
+.spacer {
+  flex: 1;
+}
+
+a,
+a:visited,
+a:hover {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #125699;
+}
+
+#app-container {
+  display: inline-mason;
 }
