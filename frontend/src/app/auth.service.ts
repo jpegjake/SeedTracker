@@ -38,7 +38,7 @@ export class AuthService {
       console.log('Auth state changed:', user);
     });
 
-    this.token = localStorage.getItem('jwt') ?? '';
+    this.token = sessionStorage.getItem('jwt') ?? '';
   }
 
   private createOrUpdateLocalAccount(
@@ -56,7 +56,7 @@ export class AuthService {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     this.token = await result.user.getIdToken();
-    localStorage.setItem('jwt', this.token ?? '');
+    sessionStorage.setItem('jwt', this.token ?? '');
 
     await firstValueFrom(this.createOrUpdateLocalAccount(result.user?.email ?? ""));
 
@@ -72,7 +72,7 @@ export class AuthService {
 
     if (result.user != null) {
       this.token = await result.user?.getIdToken();
-      localStorage.setItem('jwt', this.token ?? '');
+      sessionStorage.setItem('jwt', this.token ?? '');
 
       await firstValueFrom(
         this.createOrUpdateLocalAccount(result.user?.email ?? "")
@@ -92,7 +92,7 @@ export class AuthService {
 
     if (result.user != null) {
       this.token = await result.user?.getIdToken();
-      localStorage.setItem('jwt', this.token ?? '');
+      sessionStorage.setItem('jwt', this.token ?? '');
 
       firstValueFrom(
         this.createOrUpdateLocalAccount(result.user?.email ?? "")
@@ -105,7 +105,7 @@ export class AuthService {
 
   logout() {
     signOut(auth);
-    localStorage.removeItem('jwt');
+    sessionStorage.removeItem('jwt');
     this.token = '';
   }
 
