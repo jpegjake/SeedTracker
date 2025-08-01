@@ -37,7 +37,7 @@ Resources:
       Cors:
         AllowMethods: "'GET,POST,DELETE,OPTIONS'"
         AllowHeaders: "'Content-Type,Authorization'"
-        AllowOrigin: "'http://44.239.46.70'"
+        AllowOrigin: "'*'"
         
   UserFunction:
     Type: AWS::Serverless::Function
