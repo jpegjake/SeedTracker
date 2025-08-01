@@ -14,7 +14,6 @@ Resources:
   AuthFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
       Handler: auth.handler
       Runtime: nodejs18.x
       Policies:
@@ -34,11 +33,14 @@ Resources:
             FunctionArn: !GetAtt AuthFunction.Arn
             Identity:
               Header: Authorization
+      Cors:
+        AllowMethods: "'GET,POST,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization'"
+        AllowOrigin: "'http://44.239.46.70'"
         
   UserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
       Handler: users.handler
       Runtime: nodejs18.x
       Events:
@@ -48,23 +50,28 @@ Resources:
             Path: /user
             Method: get
             RestApiId: !Ref FirebaseApi
+            Auth:
+              Authorizer: Firebase
         CreateUser:
           Type: Api
           Properties:
             Path: /user
             Method: post
             RestApiId: !Ref FirebaseApi
+            Auth:
+              Authorizer: Firebase
         DeleteUser:
           Type: Api
           Properties:
             Path: /user
             Method: delete
             RestApiId: !Ref FirebaseApi
+            Auth:
+              Authorizer: Firebase
 
   SeedsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
       Handler: seeds.handler
       Runtime: nodejs18.x
       Events:
@@ -74,35 +81,44 @@ Resources:
             Path: /seeds/all
             Method: get
             RestApiId: !Ref FirebaseApi
+            Auth:
+              Authorizer: Firebase
         GetUserSeeds:
           Type: Api
           Properties:
             Path: /seeds
             Method: get
             RestApiId: !Ref FirebaseApi
+            Auth:
+              Authorizer: Firebase
         CreateSeed:
           Type: Api
           Properties:
             Path: /seed
             Method: post
             RestApiId: !Ref FirebaseApi
+            Auth:
+              Authorizer: Firebase
         UpdateSeed:
           Type: Api
           Properties:
             Path: /seed
             Method: put
             RestApiId: !Ref FirebaseApi
+            Auth:
+              Authorizer: Firebase
         DeleteSeed:
           Type: Api
           Properties:
             Path: /seed
             Method: delete
             RestApiId: !Ref FirebaseApi
+            Auth:
+              Authorizer: Firebase
 
   PlantTypesFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
       Handler: planttypes.handler
       Runtime: nodejs18.x
       Events:
@@ -112,9 +128,13 @@ Resources:
             Path: /planttypes/{type}
             Method: get
             RestApiId: !Ref FirebaseApi
+            Auth:
+              Authorizer: Firebase
         GetUniquePlantTypes:
           Type: Api
           Properties:
             Path: /planttypes
             Method: get
             RestApiId: !Ref FirebaseApi
+            Auth:
+              Authorizer: Firebase

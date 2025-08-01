@@ -1,20 +1,18 @@
 {
-  "resource": "/users",
-  "path": "/users",
+  "resource": "/user",
+  "path": "/user",
   "httpMethod": "GET",
   "headers": {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6Ijk1MWRkZTkzMmViYWNkODhhZmIwMDM3YmZlZDhmNjJiMDdmMDg2NmIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc2VlZHRyYWNrZXItODk0MzgiLCJhdWQiOiJzZWVkdHJhY2tlci04OTQzOCIsImF1dGhfdGltZSI6MTc1NDAwODk2NCwidXNlcl9pZCI6IkRoUVE2MlFDQkNnRTdLcDFoNVJvUVBLOUZseDEiLCJzdWIiOiJEaFFRNjJRQ0JDZ0U3S3AxaDVSb1FQSzlGbHgxIiwiaWF0IjoxNzU0MDA4OTY0LCJleHAiOjE3NTQwMTI1NjQsImVtYWlsIjoianBlZ2pha2VAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImpwZWdqYWtlQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.oQ2vdXYq7Hm_VtJdJIztZ2X9aeAo1MuWXyUL2BAaZXVQsIprPNGpMSrqcyCU-iA3WaBBwX8kM-H6mW9Qlp4XVGJQLBtmkkBrdW_lTtcDrah7UspdIJYrrOfdYKJgNrPUMZfS_q8VTS-Y0u3JKOmhM8fQRaYILa4-liJWKnTQVib_mO6Q6k2MhIVI9JOIRT6N4F5aVtKjynVOYPvc1-A6XP0hx5LCCcp4Ze1-k697RpyRxSzlBOI8U_Qntdc6VWwULIEwuVg57uDDBU6_v7Cz_C7ra-gUV4g_NylrMkjXvI3vNa50TgVY7QaKj7rZC0oh8gj3ukoNbgYOph2tCMG9Ag"
   },
   "queryStringParameters": {
     "includeDetails": "true"
   },
-  "pathParameters": {
-    "id": "123"
-  },
   "requestContext": {
-    "resourcePath": "/users",
+    "resourcePath": "/user",
     "httpMethod": "GET",
-    "path": "/users"
+    "path": "/user"
   },
   "body": null,
   "isBase64Encoded": false
