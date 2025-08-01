@@ -1,0 +1,132 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Seed Tracker App
+Globals:
+  Function:
+    Runtime: nodejs18.x
+    Timeout: 10
+    MemorySize: 128
+Resources:
+  AuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: AuthFunction
+      Handler: auth.handler
+      Runtime: nodejs18.x
+      Policies:
+      - AWSLambdaBasicExecutionRole
+    Metadata:
+      SamResourceId: AuthFunction
+  FirebaseApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: FirebaseApi
+      StageName: Prod
+      Auth:
+        DefaultAuthorizer: Firebase
+        AddDefaultAuthorizerToCorsPreflight: false
+        Authorizers:
+          Firebase:
+            FunctionArn:
+              Fn::GetAtt:
+              - AuthFunction
+              - Arn
+            Identity:
+              Header: Authorization
+  UserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: UserFunction
+      Handler: users.handler
+      Runtime: nodejs18.x
+      Events:
+        GetUser:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: get
+            RestApiId:
+              Ref: FirebaseApi
+        CreateUser:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: post
+            RestApiId:
+              Ref: FirebaseApi
+        DeleteUser:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: delete
+            RestApiId:
+              Ref: FirebaseApi
+    Metadata:
+      SamResourceId: UserFunction
+  SeedsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: SeedsFunction
+      Handler: seeds.handler
+      Runtime: nodejs18.x
+      Events:
+        GetAllSeeds:
+          Type: Api
+          Properties:
+            Path: /seeds/all
+            Method: get
+            RestApiId:
+              Ref: FirebaseApi
+        GetUserSeeds:
+          Type: Api
+          Properties:
+            Path: /seeds
+            Method: get
+            RestApiId:
+              Ref: FirebaseApi
+        CreateSeed:
+          Type: Api
+          Properties:
+            Path: /seed
+            Method: post
+            RestApiId:
+              Ref: FirebaseApi
+        UpdateSeed:
+          Type: Api
+          Properties:
+            Path: /seed
+            Method: put
+            RestApiId:
+              Ref: FirebaseApi
+        DeleteSeed:
+          Type: Api
+          Properties:
+            Path: /seed
+            Method: delete
+            RestApiId:
+              Ref: FirebaseApi
+    Metadata:
+      SamResourceId: SeedsFunction
+  PlantTypesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PlantTypesFunction
+      Handler: planttypes.handler
+      Runtime: nodejs18.x
+      Events:
+        GetPlantTypes:
+          Type: Api
+          Properties:
+            Path: /planttypes/{type}
+            Method: get
+            RestApiId:
+              Ref: FirebaseApi
+        GetUniquePlantTypes:
+          Type: Api
+          Properties:
+            Path: /planttypes
+            Method: get
+            RestApiId:
+              Ref: FirebaseApi
+    Metadata:
+      SamResourceId: PlantTypesFunction

@@ -1,0 +1,21 @@
+{
+  "resource": "/users",
+  "path": "/users",
+  "httpMethod": "GET",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "queryStringParameters": {
+    "includeDetails": "true"
+  },
+  "pathParameters": {
+    "id": "123"
+  },
+  "requestContext": {
+    "resourcePath": "/users",
+    "httpMethod": "GET",
+    "path": "/users"
+  },
+  "body": null,
+  "isBase64Encoded": false
+}
