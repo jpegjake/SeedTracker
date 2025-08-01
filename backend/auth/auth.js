@@ -16,10 +16,21 @@ async function initializeApp() {
     if (!response.SecretString) {
       throw new Error("SecretString is undefined");
     }
-    
-    const secret = 
-      JSON.parse(response.SecretString)
-      .FIREBASE_CONFIG;
+
+    let secret = JSON.parse(response.SecretString);
+    secret = JSON.parse(secret.FIREBASE_CONFIG);
+
+    // Ensure the secret exists and is a string before parsing
+    if (
+      !secret ||
+      !secret.project_id ||
+      !secret.client_email ||
+      !secret.private_key
+    ) {
+      console.error(
+        "Malformed secret: Missing required fields"
+      );
+    }
 
     admin.initializeApp({
       credential: admin.credential.cert({
@@ -36,8 +47,7 @@ exports.handler = async (event) => {
     await initializeApp();
 
     console.log('Received event:', JSON.stringify(event, null, 2));
-    const authHeader = 
-      event.headers?.Authorization || event.headers?.authorization;
+    const authHeader = event.authorizationToken || event.AuthorizationToken;
     console.log('Authorization header:', authHeader);
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -53,19 +63,44 @@ exports.handler = async (event) => {
 
     console.log('Authenticated user UID:', uid);
 
-    // ✅ Continue with authenticated logic
+    // Construct the IAM policy based on the decoded token
+    // You can customize this policy based on user roles or claims in the token
+    const policy = generatePolicy(decodedToken.uid, "Allow", event.methodArn);
+
+    // Return the policy and optional context information
     return {
-      statusCode: 200,
-      body: decodedToken 
+      principalId: decodedToken.uid,
+      policyDocument: policy,
+      context: decodedToken
     };
 
   } catch (err) {
 
     console.error('Auth error:', err);
     return {
-      statusCode: 403,
-      body: 'Unauthorized'
+      principalId: "user", // A generic principalId for unauthorized requests
+      policyDocument: generatePolicy("user", "Deny", event.methodArn),
     };
       
   }
+};
+
+// Helper function to generate an IAM policy
+function generatePolicy(principalId, effect, resource) {
+  const authResponse = {};
+  authResponse.principalId = principalId;
+
+  if (effect && resource) {
+    const policyDocument = {};
+    policyDocument.Version = '2012-10-17';
+    policyDocument.Statement = [];
+    const statementOne = {};
+    statementOne.Action = 'execute-api:Invoke';
+    statementOne.Effect = effect;
+    statementOne.Resource = resource;
+    policyDocument.Statement[0] = statementOne;
+    authResponse.policyDocument = policyDocument;
+  }
+
+  return authResponse.policyDocument;
 }

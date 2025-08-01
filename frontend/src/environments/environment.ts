@@ -5,7 +5,7 @@
 export class environment {
   public static readonly production: boolean = false;
   public static readonly apiUrl: string =
-    'https://6hv5ldt65f.execute-api.us-west-2.amazonaws.com/Prod';
+    'http://localhost:3000';
   public static readonly firebase: object = {
     apiKey: 'AIzaSyCtDUzlnITmwsR3KIRy-4hnMtJJS_VW5VI',
     authDomain: 'seedtracker-89438.firebaseapp.com',

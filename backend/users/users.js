@@ -2,48 +2,54 @@ const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const {
   DynamoDBDocumentClient,
   GetCommand,
+  QueryCommand,
   PutCommand,
   DeleteCommand,
   UpdateCommand,
   ScanCommand,
 } = require("@aws-sdk/lib-dynamodb");
 
-const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+const client = DynamoDBDocumentClient.from(
+  new DynamoDBClient({ region: "us-west-2" })
+);
 const TABLE_NAME = "Users";
 
 exports.handler = async (event) => {
   const { httpMethod, path, pathParameters, body } = event;
+  console.log("Received event:", JSON.stringify(event, null, 2));
 
   try {
-    const userid_fromauth = event.requestContext?.authorizer?.user?.uid;
-    console.log("User from auth:", JSON.stringify(event.requestContext?.authorizer?.user));
+    const userid_fromauth = event.requestContext?.authorizer?.uid;
+    console.log("User from auth:", JSON.stringify(event.requestContext?.authorizer));
     console.log("User ID from auth:", userid_fromauth);
     
     //Get one user by ID
     if (httpMethod === "GET" && path === '/user') {
       const result = await client.send(
-        new ScanCommand({
+        new GetCommand({
           TableName: TABLE_NAME,
           Key: { id: userid_fromauth },
         })
       );
-      return response(200, result.Items);
+
+      if (!result.Item)
+        return response(404, { error: "User not found" });
+      else
+        delete result.Item.id; // remove internal id from response
+
+      return response(200, result.Item);
     }
 
     //Add or update a user
     if (httpMethod === "POST" && path === '/user') {
       const user = JSON.parse(body);
-
-      if (user.id != userid_fromauth)
-        return {
-          statusCode: 403,
-          body: "Unauthorized",
-        };
+      user.id = userid_fromauth;
+      user.updated = new Date().toISOString();
 
       const result = await client.send(
-        new ScanCommand({
+        new QueryCommand({
           TableName: TABLE_NAME,
-          FilterExpression: "#u = :useridVal",
+          KeyConditionExpression: "#u = :useridVal",
           ExpressionAttributeNames: {
             "#u": "id",
           },
@@ -57,24 +63,25 @@ exports.handler = async (event) => {
       if (result.Items && result.Items.length > 0) {
 
         await client.send(
+          new UpdateCommand({
+            TableName: TABLE_NAME,
+            Item: user,
+          })
+        );
+
+        return response(201, { message: `User updated` });
+
+      } else {
+
+        user.created = new Date().toISOString();
+        await client.send(
           new PutCommand({
             TableName: TABLE_NAME,
             Item: user,
           })
         );
 
-        return response(201, { message: `User ${userid_fromauth} updated` });
-
-      } else {
-
-        await client.send(
-          new PostCommand({
-            TableName: TABLE_NAME,
-            Item: user,
-          })
-        );
-
-        return response(201, { message: `User ${userid_fromauth} created.` });
+        return response(201, { message: `User created.` });
 
       }
 

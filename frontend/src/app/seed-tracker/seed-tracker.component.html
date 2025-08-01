@@ -52,7 +52,7 @@
           <tbody>
             <tr *ngFor="let crop of crops">
               <th *ngIf="!printMode" scope="row">
-                @if (editRowMode && editRowID == crop.idseeds) {
+                @if (editRowMode && editRowID == crop.created) {
                   <button type="button" title="Submit Edits" (click)="submitEdit()" class="btn btn-outline-primary"><i class="bi bi-pencil-square text-primary"></i></button>
                   <i> </i>
                   <button type="button" title="Cancel" (click)="editCrop(crop)" class="btn btn-outline-secondary"><i class="bi bi-x-lg text-secondary"></i></button>
@@ -62,7 +62,7 @@
                   <button type="button" title="Delete" (click)="deleteCrop(crop)" class="btn btn-outline-danger"><i class="bi bi-x-lg text-danger"></i></button>
                 }
               </th>
-              @if (editRowMode && editRowID == crop.idseeds) {
+              @if (editRowMode && editRowID == crop.created) {
                 <td>
                   <mat-form-field class="example-full-width">
                     <mat-label>Plant Type</mat-label>

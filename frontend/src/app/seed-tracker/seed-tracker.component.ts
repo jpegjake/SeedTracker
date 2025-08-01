@@ -43,7 +43,7 @@ export class SeedTrackerComponent implements OnInit, AfterViewChecked {
   errorMessage: string = '';
   editRowMode: boolean = false;
   printMode: boolean = true;
-  editRowID: number = 0;
+  editRowID: string = '';
 
   private refreshData: BehaviorSubject<void> = new BehaviorSubject<void>(
     undefined
@@ -260,7 +260,7 @@ export class SeedTrackerComponent implements OnInit, AfterViewChecked {
 
   editCrop(crop: SeedTracked): void {
     this.editRowMode = !this.editRowMode;
-    this.editRowID = crop.idseeds;
+    this.editRowID = crop.created;
 
     if (!this.editRowMode) this.resetForm();
     else this.setForm(crop);
@@ -268,7 +268,7 @@ export class SeedTrackerComponent implements OnInit, AfterViewChecked {
 
   submitEdit(): void {
     let revised_plant = new SeedTracked();
-    revised_plant.idseeds = this.editRowID;
+    revised_plant.created = this.editRowID;
     revised_plant.type = this.myForm.controls['type'].value;
     revised_plant.subtype = this.myForm.controls['subtype'].value;
     revised_plant.qty = this.myForm.controls['qty'].value;
@@ -309,7 +309,7 @@ export class SeedTrackerComponent implements OnInit, AfterViewChecked {
         '"?'
     );
     if (dialogResult)
-      this.seedTrackerService.deleteSeed(crop.idseeds).subscribe(
+      this.seedTrackerService.deleteSeed(crop.created).subscribe(
         (response) => {
           this.refreshData.next();
         },

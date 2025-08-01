@@ -1,5 +1,5 @@
 export class SeedTracked {
-  public idseeds: number = 0;
+  public created: string = '';
   public type: string = '';
   public subtype: string = '';
   public qty: number = 0;

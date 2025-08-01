@@ -45,7 +45,7 @@ export class AuthService {
     email: string
   ): Observable<any> {
     return this.http.post(
-      this.url + '/users',
+      this.url + '/user',
       {
         "email":email
       }
@@ -58,7 +58,7 @@ export class AuthService {
     this.token = await result.user.getIdToken();
     localStorage.setItem('jwt', this.token ?? '');
 
-    await firstValueFrom(this.createOrUpdateLocalAccount(result.user.email ?? ""));
+    await firstValueFrom(this.createOrUpdateLocalAccount(result.user?.email ?? ""));
 
     return result.user;
   }
@@ -75,7 +75,7 @@ export class AuthService {
       localStorage.setItem('jwt', this.token ?? '');
 
       await firstValueFrom(
-        this.createOrUpdateLocalAccount(result.user?.email ?? '')
+        this.createOrUpdateLocalAccount(result.user?.email ?? "")
       );
     }
 
@@ -95,7 +95,7 @@ export class AuthService {
       localStorage.setItem('jwt', this.token ?? '');
 
       firstValueFrom(
-        this.createOrUpdateLocalAccount(result.user?.email ?? '')
+        this.createOrUpdateLocalAccount(result.user?.email ?? "")
       );
     }
 

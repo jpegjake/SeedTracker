@@ -25,10 +25,7 @@ export class SeedTrackerService {
   // A Subject to signal when polling should stop
   private stopPollingSubject = new Subject<void>();
 
-  constructor(
-    private http: HttpClient,
-    private auth: AuthService
-  ) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
   /**
    * Creates a polling Observable for a given HTTP request function.
@@ -46,10 +43,7 @@ export class SeedTrackerService {
     retryDelayMs: number = 1000
   ): Observable<T> {
     requestFn = requestFn.bind(this);
-    return merge(
-      timer(0, intervalMs),
-      refreshTrigger
-    ).pipe(
+    return merge(timer(0, intervalMs), refreshTrigger).pipe(
       // Start immediately, then every intervalMs
       switchMap(() =>
         requestFn().pipe(
@@ -85,44 +79,36 @@ export class SeedTrackerService {
   }
 
   public getSeeds(): Observable<SeedTracked[]> {
-    return this.http.get<SeedTracked[]>(this.url + '/seeds').pipe(map(
-      (data)=>{
-        for ( const row of data )
-          row.qty = +row.qty;
+    return this.http.get<SeedTracked[]>(this.url + '/seeds').pipe(
+      map((data) => {
+        for (const row of data) row.qty = +row.qty;
         return data;
       })
     );
   }
 
-  public getSeed(idseeds: Number): Observable<SeedTracked> {
-    return this.http.get<SeedTracked>(this.url + '/seeds/' + idseeds
-      ).pipe(map(
-        (data)=>{
-          data.qty = +data.qty;
-          return data;
-        })
-      );
+  public getAllSeeds(): Observable<SeedTracked[]> {
+    return this.http.get<SeedTracked[]>(this.url + '/seeds/all').pipe(
+      map((data) => {
+        for (const row of data) row.qty = +row.qty;
+        return data;
+      })
+    );
   }
 
   public editSeed(revised_plant: SeedTracked): Observable<any> {
-    return this.http.put(
-      this.url + '/seeds/' + revised_plant.idseeds,
-      revised_plant
-    );
+    return this.http.put(this.url + '/seed', revised_plant);
   }
 
   public addSeed(new_plant: SeedTracked): Observable<any> {
-    return this.http.post(
-      this.url + '/seeds',
-      new_plant
-    );
+    return this.http.post(this.url + '/seed', new_plant);
   }
 
-  public deleteSeed(idseeds: number): Observable<any> {
-    return this.http.delete(this.url + '/seeds/' + idseeds);
+  public deleteSeed(created: string): Observable<any> {
+    return this.http.delete(this.url + '/seed', { body: { created: created } });
   }
 
-  public deleteAllSeeds(): Observable<any> {
+/*   public deleteAllSeeds(): Observable<any> {
     return this.http.delete(this.url + '/seeds');
-  }
+  } */
 }
