@@ -1,8 +1,9 @@
 {
-  "name": "seed-tracker-backend",
+  "name": "backend",
   "version": "1.0.0",
-  "dependencies": {
-    "@aws-sdk/client-secrets-manager": "^3.857.0",
-    "firebase-admin": "^13.4.0"
-  }
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "dependencies": {}
 }
