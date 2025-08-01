@@ -27,8 +27,8 @@ const initializeApp = async () => {
 
     // Parse the secret string from Secrets Manager.
     // Assuming the secret itself is a JSON object with the required Firebase keys.
-    const secret = JSON.parse(response.SecretString);
-    secret = JSON.parse(secret.FIREBASE_CONFIG);
+    const secretString = JSON.parse(response.SecretString);
+    const secret = JSON.parse(secretString.FIREBASE_CONFIG);
 
     // Check for required fields to prevent initialization errors
     if (

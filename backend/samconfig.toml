@@ -5,6 +5,6 @@ stack_name = "SeedTrackerStack"
 resolve_s3 = true
 s3_prefix = "SeedTrackerStack"
 region = "us-west-2"
-confirm_changeset = true
+confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
