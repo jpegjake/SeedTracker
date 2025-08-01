@@ -7,6 +7,12 @@ Globals:
     Runtime: nodejs18.x
     Timeout: 10
     MemorySize: 128
+  Api:
+    Cors:
+      AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      AllowOrigin: "'http://44.239.46.70'" # Or specify a specific origin like 'https://www.example.com'
+
 
 Resources:
 
@@ -34,10 +40,6 @@ Resources:
             FunctionArn: !GetAtt AuthFunction.Arn
             Identity:
               Header: Authorization
-      Cors:
-        AllowMethods: "'GET,POST,DELETE,OPTIONS'"
-        AllowHeaders: "'Content-Type,Authorization'"
-        AllowOrigin: "'*'"
         
   UserFunction:
     Type: AWS::Serverless::Function
