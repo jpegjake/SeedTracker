@@ -51,17 +51,16 @@ exports.handler = async (event) => {
     console.log('Authorization header:', authHeader);
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return { statusCode: 401, body: "Missing or invalid Authorization header" };
+      throw("Missing or invalid Authorization header");
     }
     const idToken = authHeader.split(' ')[1];
 
     console.log('Extracted ID Token:', idToken);
 
     // ✅ VERIFY the token
-    const decodedToken = {uid:"ladeedadeeda"};//await admin.auth().verifyIdToken(idToken);
-    const uid = decodedToken.uid;
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
 
-    console.log('Authenticated user UID:', uid);
+    console.log("Authenticated user UID:", decodedToken.uid);
 
     // Construct the IAM policy based on the decoded token
     // You can customize this policy based on user roles or claims in the token
@@ -71,7 +70,9 @@ exports.handler = async (event) => {
     return {
       principalId: decodedToken.uid,
       policyDocument: policy,
-      context: decodedToken
+      context: {
+        email: decodedToken.email
+      },
     };
 
   } catch (err) {
