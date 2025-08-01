@@ -17,7 +17,9 @@ async function initializeApp() {
       throw new Error("SecretString is undefined");
     }
     
-    const secret = JSON.parse(response.SecretString);
+    const secret = 
+      JSON.parse(response.SecretString)
+      .FIREBASE_CONFIG;
 
     admin.initializeApp({
       credential: admin.credential.cert({
