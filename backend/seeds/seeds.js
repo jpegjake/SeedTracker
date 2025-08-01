@@ -42,7 +42,6 @@ exports.handler = async (event) => {
           },
         })
       );
-      "One or more parameter values were invalid: Condition parameter type does not match schema type";
       return response(200, result.Items);
     }
 

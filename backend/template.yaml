@@ -4,14 +4,15 @@ Description: Seed Tracker App
 
 Globals:
   Function:
-    Runtime: nodejs18.x
+    Runtime: nodejs20.x
     Timeout: 10
     MemorySize: 128
+    Tracing: Active
   Api:
     Cors:
-      AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE'"
+      AllowMethods: "'*'"
       AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-      AllowOrigin: "'http://44.239.46.70'" # Or specify a specific origin like 'https://www.example.com'
+      AllowOrigin: "'*'" 
 
 
 Resources:
@@ -22,7 +23,6 @@ Resources:
     Properties:
       CodeUri: ./auth/
       Handler: auth.handler
-      Runtime: nodejs18.x
       Policies:
         - AWSLambdaBasicExecutionRole
 
@@ -31,7 +31,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       Name: FirebaseApi
-      StageName: Prod  # 🔧 REQUIRED
+      StageName: Prod 
       Auth:
         DefaultAuthorizer: Firebase
         AddDefaultAuthorizerToCorsPreflight: false
@@ -46,8 +46,11 @@ Resources:
     Properties:
       CodeUri: ./users/
       Handler: users.handler
-      Runtime: nodejs18.x
       Events:
+        # A specific event for the OPTIONS method is not needed for simple CORS configs,
+        # but including it can help with debugging and ensures the authorizer is not
+        # applied to preflight requests. The RestApi 'Cors' property already handles
+        # the OPTIONS preflight, so we just need to ensure the methods are configured.
         GetUser:
           Type: Api
           Properties:
@@ -78,7 +81,6 @@ Resources:
     Properties:
       CodeUri: ./seeds/
       Handler: seeds.handler
-      Runtime: nodejs18.x
       Events:
         GetAllSeeds:
           Type: Api
@@ -126,7 +128,6 @@ Resources:
     Properties:
       CodeUri: ./planttypes/
       Handler: planttypes.handler
-      Runtime: nodejs18.x
       Events:
         GetPlantTypes:
           Type: Api
