@@ -63,10 +63,7 @@ exports.handler = async (event) => {
       if (result.Items && result.Items.length > 0) {
 
         await client.send(
-          new UpdateCommand({
-            TableName: TABLE_NAME,
-            Item: user,
-          })
+          BuildUpdateCommand(TABLE_NAME, item, ["id"])
         );
 
         return response(201, { message: `User updated` });
@@ -122,4 +119,38 @@ function response(statusCode, body) {
     body: JSON.stringify(body),
     headers: { "Access-Control-Allow-Origin": "*" },
   };
+}
+
+function BuildUpdateCommand(
+  table_name,
+  item,
+  primary_keys = ["id"]
+) {
+  // Extract keys to update (exclude key fields)
+  const updates = Object.keys(item).filter((k) => !primary_keys.includes(k));
+
+  const UpdateExpression =
+    "SET " + updates.map((k, i) => `#k${i} = :v${i}`).join(", ");
+  const ExpressionAttributeNames = {};
+  const ExpressionAttributeValues = {};
+
+  updates.forEach((k, i) => {
+    ExpressionAttributeNames[`#k${i}`] = k;
+    ExpressionAttributeValues[`:v${i}`] = item[k];
+  });
+
+  // Build the key parameters for the command
+  const key_params = {};
+  for (const key of primary_keys) {
+    key_params[key] = item[key];
+  }
+
+  // Build the command
+  return new UpdateCommand({
+    TableName: table_name,
+    Key: key_params,
+    UpdateExpression,
+    ExpressionAttributeNames,
+    ExpressionAttributeValues,
+  });
 }

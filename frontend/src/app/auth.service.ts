@@ -44,6 +44,7 @@ export class AuthService {
   private createOrUpdateLocalAccount(
     email: string
   ): Observable<any> {
+    //service will automoatically gain the user id from the token
     return this.http.post(
       this.url + '/user',
       {
