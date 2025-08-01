@@ -14,6 +14,7 @@ Resources:
   AuthFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: src/
       Handler: auth.handler
       Runtime: nodejs18.x
       Policies:
@@ -41,6 +42,7 @@ Resources:
   UserFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: src/
       Handler: users.handler
       Runtime: nodejs18.x
       Events:
@@ -72,6 +74,7 @@ Resources:
   SeedsFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: src/
       Handler: seeds.handler
       Runtime: nodejs18.x
       Events:
@@ -119,6 +122,7 @@ Resources:
   PlantTypesFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: src/
       Handler: planttypes.handler
       Runtime: nodejs18.x
       Events:
