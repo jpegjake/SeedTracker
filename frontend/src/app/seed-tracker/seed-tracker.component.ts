@@ -121,12 +121,11 @@ export class SeedTrackerComponent implements OnInit, OnDestroy {
         next: (data: SeedTracked[]) => {
           if (data && data.length > 0) {
             this.crops = this.sort(data);
-            this.isLoading = false; // Set loading state to true
-          }
-          else {
+          } else {
             this.crops = data;
             this.printMode = false; // Disable print mode if no crops are available
           }
+          this.isLoading = false; // Set loading state to false
         },
         error: (error) => {
           this.errorMessage = error;
@@ -263,15 +262,15 @@ export class SeedTrackerComponent implements OnInit, OnDestroy {
   }
 
   printPage() {
-    const printContents = document.getElementById('print-area')?.innerHTML;
-    const originalContents = document.body.innerHTML;
+    // const printContents = document.getElementById('print-area')?.innerHTML;
+    // const originalContents = document.body.innerHTML;
 
-    if (printContents) {
-      document.body.innerHTML = printContents;
-      window.print();
-      document.body.innerHTML = originalContents;
-      //location.reload(); // optional: reload to restore bindings
-    }
+    // if (printContents) {
+    //   document.body.innerHTML = printContents;
+         window.print();
+    //   document.body.innerHTML = originalContents;
+    //   location.reload(); // optional: reload to restore bindings
+    // }
   }
 
   private _filterTypes(value: string): string[] {

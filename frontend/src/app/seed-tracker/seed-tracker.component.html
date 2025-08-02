@@ -1,4 +1,4 @@
-<div class="container">
+<div>
 
   <form [formGroup]="myForm" >
     <button type="button" title="Edit View" (click)="printMode = false;" [disabled]="!printMode" class="btn btn-outline-primary" [style.color] = "!printMode ? 'var(--bs-btn-hover-color)' : 'var(--bs-btn-color)'" [style.backgroundColor]="!printMode ? 'var(--bs-btn-hover-bg)' : 'var(--bs-btn-bg)'">Edit View</button>
@@ -6,7 +6,7 @@
     <button type="button" (click)="printPage()" [hidden]="!printMode" class="btn btn-outline-primary">🖨️ Print</button>
     <div id="print-area">
       <h1>Seed Tracker</h1>
-      <div class="d-flex justify-content-center">
+      <div class="overflow-auto">
         <table class="w-auto">
           <thead>
             <tr>
@@ -41,7 +41,7 @@
                   {{ currentSort.direction === 'asc' ? '▲' : '▼' }}
                 </span></a>
               </th>
-              <th scope="col">
+              <th scope="col" style="min-width: 20vw;">
                 <a href="#"  (click)="sortBy('notes'); $event.preventDefault();">Notes
                 <span *ngIf="currentSort.column === 'notes'">
                   {{ currentSort.direction === 'asc' ? '▲' : '▼' }}
