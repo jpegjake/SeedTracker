@@ -42,29 +42,23 @@ exports.handler = async (event) => {
 
     //Add or update a user
     if (httpMethod === "POST" && path === '/user') {
-      const user = JSON.parse(body);
-      user.id = userid_fromauth;
-      user.updated = new Date().toISOString();
 
       const result = await client.send(
-        new QueryCommand({
+        new GetCommand({
           TableName: TABLE_NAME,
-          KeyConditionExpression: "#u = :useridVal",
-          ExpressionAttributeNames: {
-            "#u": "id",
-          },
-          ExpressionAttributeValues: {
-            ":useridVal": userid_fromauth,
+          Key: {
+            id: userid_fromauth , 
           },
         })
       );
 
+      const user = JSON.parse(body);
+      user.id = userid_fromauth;
+      user.updated = new Date().toISOString();
       //if the user already exists, perform update
-      if (result.Items && result.Items.length > 0) {
+      if (result.Item) {
 
-        await client.send(
-          BuildUpdateCommand(TABLE_NAME, item, ["id"])
-        );
+        await client.send(BuildUpdateCommand(TABLE_NAME, user, ["id"]));
 
         return response(201, { message: `User updated` });
 

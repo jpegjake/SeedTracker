@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, AfterViewChecked, AfterContentChecked, AfterContentInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, AfterViewChecked, AfterContentChecked, AfterContentInit, OnDestroy } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -32,7 +32,7 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./seed-tracker.component.css'],
   standalone: false,
 })
-export class SeedTrackerComponent implements OnInit, AfterViewChecked {
+export class SeedTrackerComponent implements OnInit, OnDestroy {
   myForm!: FormGroup;
   _formBuilder: FormBuilder = new FormBuilder();
   plantTypes: string[] = [];
@@ -44,6 +44,7 @@ export class SeedTrackerComponent implements OnInit, AfterViewChecked {
   editRowMode: boolean = false;
   printMode: boolean = true;
   editRowID: string = '';
+  isLoading: boolean = false;
 
   private refreshData: BehaviorSubject<void> = new BehaviorSubject<void>(
     undefined
@@ -53,78 +54,6 @@ export class SeedTrackerComponent implements OnInit, AfterViewChecked {
     private seedTrackerService: SeedTrackerService,
     private dialogService: MatDialog
   ) {}
-
-  printPage() {
-    const printContents = document.getElementById('print-area')?.innerHTML;
-    const originalContents = document.body.innerHTML;
-
-    if (printContents) {
-      document.body.innerHTML = printContents;
-      window.print();
-      document.body.innerHTML = originalContents;
-      location.reload(); // optional: reload to restore bindings
-    }
-  }
-
-  private _filterTypes(value: string): string[] {
-    if (value == null || value == '') return this.plantTypes;
-    const filterValue = value.toLowerCase();
-
-    return this.plantTypes.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
-  }
-  private _filterSubTypes(value: string): string[] {
-    if (value == null || value == '') return this.plantSubTypes;
-    const filterValue = value.toLowerCase();
-
-    return this.plantSubTypes.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
-  }
-
-  currentSort = {
-    column: '',
-    direction: 'asc',
-  };
-
-  sortBy(column: string) {
-    if (this.editRowMode) return;
-
-    const dir =
-      this.currentSort.column === column && this.currentSort.direction === 'asc'
-        ? 'desc'
-        : 'asc';
-    this.currentSort = { column, direction: dir };
-
-    this.crops = this.sort(this.crops);
-  }
-
-  sort(data: SeedTracked[]): SeedTracked[] {
-    if (this.currentSort.column === '')
-      return data;
-    return data.sort((a, b) => {
-      const valA = a[this.currentSort.column as keyof SeedTracked];
-      const valB = b[this.currentSort.column as keyof SeedTracked];
-
-      // Treat null or undefined values as less than any real value (can be reversed)
-      if (valA == null && valB == null) return 0;
-      if (valA == null) return this.currentSort.direction === 'asc' ? 1 : -1;
-      if (valB == null) return this.currentSort.direction === 'asc' ? -1 : 1;
-
-      if (typeof valA === 'string' && typeof valB === 'string') {
-        return this.currentSort.direction === 'asc'
-          ? valA.localeCompare(valB)
-          : valB.localeCompare(valA);
-      }
-
-      return this.currentSort.direction === 'asc'
-        ? Number(valA) - Number(valB)
-        : Number(valB) - Number(valA);
-    });
-  }
-
-  ngAfterViewChecked(): void {}
 
   ngOnInit() {
     this.myForm = this._formBuilder.group({
@@ -141,7 +70,7 @@ export class SeedTrackerComponent implements OnInit, AfterViewChecked {
       .createPollingObservableShared(
         this.seedTrackerService.getPlantTypeData,
         this.refreshData,
-        5000
+        60 * 1000
       )
       .pipe(
         tap((options) => {
@@ -186,16 +115,24 @@ export class SeedTrackerComponent implements OnInit, AfterViewChecked {
       .createPollingObservableShared(
         this.seedTrackerService.getSeeds,
         this.refreshData,
-        5000
+        30 * 1000
       )
       .subscribe({
         next: (data: SeedTracked[]) => {
-          this.crops = this.sort(data);
+          if (data && data.length > 0) {
+            this.crops = this.sort(data);
+          }
+          else {
+            this.crops = data;
+            this.printMode = false; // Disable print mode if no crops are available
+          }
         },
         error: (error) => {
           this.errorMessage = error;
         },
       });
+
+    this.isLoading = true; // Set loading state to true
   }
 
   onPlantTypeChange(): void {
@@ -210,6 +147,11 @@ export class SeedTrackerComponent implements OnInit, AfterViewChecked {
           this.plantSubTypes = [];
         },
       });
+  }
+
+  ngOnDestroy(): void {
+    this.refreshData.complete(); // Clean up the BehaviorSubject to prevent memory leaks
+    this.seedTrackerService.stopAllPolling();
   }
 
   resetForm(): void {
@@ -317,5 +259,74 @@ export class SeedTrackerComponent implements OnInit, AfterViewChecked {
           this.errorMessage = 'Error deleting the data.';
         }
       );
+  }
+
+  printPage() {
+    const printContents = document.getElementById('print-area')?.innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    if (printContents) {
+      document.body.innerHTML = printContents;
+      window.print();
+      document.body.innerHTML = originalContents;
+      location.reload(); // optional: reload to restore bindings
+    }
+  }
+
+  private _filterTypes(value: string): string[] {
+    if (value == null || value == '') return this.plantTypes;
+    const filterValue = value.toLowerCase();
+
+    return this.plantTypes.filter((option) =>
+      option.toLowerCase().includes(filterValue)
+    );
+  }
+  private _filterSubTypes(value: string): string[] {
+    if (value == null || value == '') return this.plantSubTypes;
+    const filterValue = value.toLowerCase();
+
+    return this.plantSubTypes.filter((option) =>
+      option.toLowerCase().includes(filterValue)
+    );
+  }
+
+  currentSort = {
+    column: 'created',
+    direction: 'asc',
+  };
+
+  sortBy(column: string) {
+    if (this.editRowMode) return;
+
+    const dir =
+      this.currentSort.column === column && this.currentSort.direction === 'asc'
+        ? 'desc'
+        : 'asc';
+    this.currentSort = { column, direction: dir };
+
+    this.crops = this.sort(this.crops);
+  }
+
+  sort(data: SeedTracked[]): SeedTracked[] {
+    if (this.currentSort.column === '') return data;
+    return data.sort((a, b) => {
+      const valA = a[this.currentSort.column as keyof SeedTracked];
+      const valB = b[this.currentSort.column as keyof SeedTracked];
+
+      // Treat null or undefined values as less than any real value (can be reversed)
+      if (valA == null && valB == null) return 0;
+      if (valA == null) return this.currentSort.direction === 'asc' ? 1 : -1;
+      if (valB == null) return this.currentSort.direction === 'asc' ? -1 : 1;
+
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        return this.currentSort.direction === 'asc'
+          ? valA.localeCompare(valB)
+          : valB.localeCompare(valA);
+      }
+
+      return this.currentSort.direction === 'asc'
+        ? Number(valA) - Number(valB)
+        : Number(valB) - Number(valA);
+    });
   }
 }

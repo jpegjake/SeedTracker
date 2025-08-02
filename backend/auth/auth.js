@@ -64,13 +64,25 @@ let initializationPromise = initializeApp();
 
 // Helper function to generate an IAM policy
 function generatePolicy(principalId, effect, resource) {
+
+  // Extract the base ARN components from event.methodArn
+  // event.methodArn will look something like:
+  // arn:aws:execute-api:us-east-1:123456789012:abcdef1234/prod/GET/some/path
+  const methodArnParts = resource.split(":");
+  const region = methodArnParts[3];
+  const accountId = methodArnParts[4];
+  const apiAndStage = methodArnParts[5].split("/")[0]; // Gets 'abcdef1234' from 'abcdef1234/prod/GET/some/path'
+
+  // Construct the wildcard resource ARN
+  const wildcardResourceArn = `arn:aws:execute-api:${region}:${accountId}:${apiAndStage}/*/*`;
+
   const policyDocument = {
     Version: "2012-10-17",
     Statement: [
       {
         Action: "execute-api:Invoke",
         Effect: effect,
-        Resource: resource,
+        Resource: wildcardResourceArn,
       },
     ],
   };

@@ -32,21 +32,22 @@ export class LoginComponent {
     }
   }
 
-  async onRegister() {
-    try {
-      await this.auth.register(this.regEmail, this.regPasswordConfirm);
-      this.router.navigate(['/login']);
-    } catch (err) {
-      this.message = err as string;
-    }
-  }
-
   async loginWithGoogle() {
     try {
       await this.auth.loginWithGoogle();
       this.router.navigate(['/dashboard']);
     } catch (err) {
       console.error('Google login error:', err);
+      this.message = 'Login failed.';
+    }
+  }
+
+  async onRegister() {
+    try {
+      await this.auth.register(this.regEmail, this.regPasswordConfirm);
+      this.router.navigate(['/login']);
+    } catch (err) {
+      this.message = err as string;
     }
   }
 }
