@@ -121,6 +121,7 @@ export class SeedTrackerComponent implements OnInit, OnDestroy {
         next: (data: SeedTracked[]) => {
           if (data && data.length > 0) {
             this.crops = this.sort(data);
+            this.isLoading = false; // Set loading state to true
           }
           else {
             this.crops = data;
@@ -269,7 +270,7 @@ export class SeedTrackerComponent implements OnInit, OnDestroy {
       document.body.innerHTML = printContents;
       window.print();
       document.body.innerHTML = originalContents;
-      location.reload(); // optional: reload to restore bindings
+      //location.reload(); // optional: reload to restore bindings
     }
   }
 
