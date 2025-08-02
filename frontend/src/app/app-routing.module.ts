@@ -5,6 +5,7 @@ import { LoginComponent } from './login/login.component';
 import { SeedTrackerComponent } from './seed-tracker/seed-tracker.component';
 import { AboutComponent } from './about/about.component';
 import { AuthGuard } from './auth.guard'; // Import the AuthGuard
+import { PlansComponent } from './plans/plans.component';
 
 const routes: Routes = [
   {
@@ -15,10 +16,14 @@ const routes: Routes = [
     path: 'dashboard',
     component: SeedTrackerComponent,
     canActivate: [AuthGuard],
-  }, // Protect the dashboard route
+  },
   {
     path: 'about',
     component: AboutComponent,
+  },
+  {
+    path: 'plans',
+    component: PlansComponent,
   }, // Protect the dashboard route
   {
     path: '',
