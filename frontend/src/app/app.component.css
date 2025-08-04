@@ -12,14 +12,12 @@ button {
 }
 
 .router-outlet {
-  display: inline-grid;
   font-family: 'Segoe UI', sans-serif;
   font-weight: 600;
   color: #2f4f2f;
   background:
     linear-gradient(rgba(255, 255, 255, 0.91), rgba(255, 255, 255, 0.91)),
     url('/assets/images/bg.jpg') center/cover no-repeat;
-  background-size: 100% 100%;
   padding: 1rem;
 }
 
@@ -81,4 +79,12 @@ a:hover {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  align-content: space-around;
+  flex-direction: row;
 }

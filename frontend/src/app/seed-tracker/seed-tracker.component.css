@@ -1,7 +1,11 @@
 @media print {
-  body>*:not(#print-area) {
+  body>*:not(.print-only) {
     display: none !important;
   }
+}
+
+button {
+  flex: 0 0 0;
 }
 
 h1 {

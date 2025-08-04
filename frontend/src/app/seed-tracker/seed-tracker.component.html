@@ -1,12 +1,12 @@
 <div>
 
   <form [formGroup]="myForm" >
-    <button type="button" title="Edit View" (click)="printMode = false;" [disabled]="!printMode" class="btn btn-outline-primary" [style.color] = "!printMode ? 'var(--bs-btn-hover-color)' : 'var(--bs-btn-color)'" [style.backgroundColor]="!printMode ? 'var(--bs-btn-hover-bg)' : 'var(--bs-btn-bg)'">Edit View</button>
-    <button type="button" title="Print View" (click)="printMode = true;" [disabled]="printMode" class="btn btn-outline-primary" [style.color] = "printMode ? 'var(--bs-btn-hover-color)' : 'var(--bs-btn-color)'" [style.backgroundColor]="printMode ? 'var(--bs-btn-hover-bg)' : 'var(--bs-btn-bg)'">Print View</button>
-    <button type="button" (click)="printPage()" [hidden]="!printMode" class="btn btn-outline-primary">🖨️ Print</button>
-    <div id="print-area">
-      <h1>Seed Tracker</h1>
-      <div class="overflow-auto">
+    <div class="row">
+      <button type="button" title="Edit View" (click)="printMode = false;" [disabled]="!printMode" class="col btn btn-outline-primary" [style.color] = "!printMode ? 'var(--bs-btn-hover-color)' : 'var(--bs-btn-color)'" [style.backgroundColor]="!printMode ? 'var(--bs-btn-hover-bg)' : 'var(--bs-btn-bg)'">Edit View</button>
+      <button type="button" title="Print View" (click)="printMode = true;" [disabled]="printMode" class="col btn btn-outline-primary" [style.color] = "printMode ? 'var(--bs-btn-hover-color)' : 'var(--bs-btn-color)'" [style.backgroundColor]="printMode ? 'var(--bs-btn-hover-bg)' : 'var(--bs-btn-bg)'">Print View</button>
+      <button type="button" (click)="printPage()" [hidden]="!printMode" class="col btn btn-outline-primary">🖨️ Print</button>
+      <h1 class="col-7 print-only">Seed Tracker</h1>
+      <div class="overflow-auto print-only">
         <table class="w-auto">
           <thead>
             <tr>
