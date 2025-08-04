@@ -1,19 +1,20 @@
-<div class="container" [ngSwitch]="currentSection">
+<div class="container container col-md-5 col-sm-7" [ngSwitch]="currentSection">
   <div *ngSwitchCase="'section1'">
     <h2>Login</h2>
     <form (ngSubmit)="onLogin()" #loginForm="ngForm" name="loginForm">
       <div>
-        <label >Username:</label>
+        <label >Email:</label>
         <input name="email" class="form-control" placeholder="E-mail" type="email" [(ngModel)]="email" required />
       </div>
       <div>
         <label>Password:</label>
         <input name="password" class="form-control" placeholder="Password" type="password" [(ngModel)]="password" required />
       </div>
-      <p>{{ message }}</p>
+      <p [hidden]="loginForm.valid">{{ message }}</p>
       <button [disabled]="!loginForm.valid" class="form-control btn btn-primary" type="submit" name="login">Login</button>
     </form>
 
+    <button class="btn btn-link" (click)="currentSection = 'section2'"><h3>Register a My Seed Journal account here.</h3></button>
     <hr />
     <button class="form-control btn btn-outline-primary" (click)="loginWithGoogle()">
       <span class="Button-content">
@@ -34,21 +35,32 @@
             </svg>
           </svg>
         </span>
-        <span class="Button-label">Continue with Google</span>
+        <span class="Button-label"> Login with Google</span>
       </span>
     </button>
 
-    <button class="btn btn-link" (click)="currentSection = 'section2'"><h3>Don't have an account?</h3></button>
+
+
   </div><div *ngSwitchCase="'section2'">
+    <h2>Register</h2>
     <form (ngSubmit)="onRegister()" #registerForm="ngForm" name="registerForm">
-      <input class="form-control" type="email" placeholder="Email" [(ngModel)]="regEmail" name="regEmail" required />
-      <input class="form-control" type="password" placeholder="Password" [(ngModel)]="regPassword" name="regPassword" required />
-      <input class="form-control" type="password" placeholder="Password Confirmed" [(ngModel)]="regPasswordConfirm" name="regPasswordConfirm" required />
+      <div>
+        <label >Email:</label>
+        <input class="form-control" type="email" placeholder="Email" [(ngModel)]="regEmail" name="regEmail" required />
+      </div>
+      <div>
+        <label >Password:</label>
+        <input class="form-control" type="password" placeholder="Password" [(ngModel)]="regPassword" name="regPassword" required />
+      </div>
+      <div>
+        <label >Password Again:</label>
+        <input class="form-control" type="password" placeholder="Password Confirmed" [(ngModel)]="regPasswordConfirm" name="regPasswordConfirm" required />
+      </div>
       <div *ngIf="regPasswordConfirm && regPasswordConfirm !== regPassword">
         Passwords do not match.
       </div>
 
-      <p>{{ message }}</p>
+      <p [hidden]="registerForm.valid">{{ message }}</p>
       <button class="form-control btn btn-primary" [disabled]="regPasswordConfirm !== regPassword || !registerForm.valid" type="submit" name="register">Register</button>
     </form>
     <button class="btn btn-link" (click)="currentSection = 'section1'"><h3>Go back to Login controls...</h3></button>

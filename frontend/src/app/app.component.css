@@ -87,4 +87,7 @@ nav {
   align-items: center;
   align-content: space-around;
   flex-direction: row;
+  width: 100vw;
+  position: sticky;
+  left: 0;
 }

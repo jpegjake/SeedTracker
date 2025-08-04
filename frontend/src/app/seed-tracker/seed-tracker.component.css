@@ -77,3 +77,9 @@ th {
   -ms-user-select: none;
   user-select: none;
 }
+
+.table-header {
+  width: calc(100vw - 2rem);
+  position: sticky;
+  left: 0;
+}
